@@ -1,0 +1,86 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>บัญชีรายรับรายจ่ายส่วนกลาง</title><style>
+*{box-sizing:border-box}body{font-family:system-ui,-apple-system,sans-serif;background:#f5f7fa;color:#17243b;margin:0}main{max-width:850px;margin:auto;padding:20px}h1{font-size:23px}.muted{color:#65738a;font-size:13px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.card,.panel{background:white;border:1px solid #e5eaf1;border-radius:15px;padding:16px;margin-bottom:14px}.card b{display:block;font-size:clamp(16px,4vw,26px);margin-top:8px}.green{color:#16805c}.red{color:#c83c4e}form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}label{font-size:13px}input,select,button{width:100%;padding:12px;border:1px solid #cdd5e1;border-radius:9px;font:inherit;margin-top:4px}button{background:#225bd6;color:white;border:0;font-weight:600;cursor:pointer}button:disabled{opacity:.5}.wide{grid-column:1/-1}.tools{display:flex;gap:8px;flex-wrap:wrap}.tools>*{flex:1;min-width:120px}table{width:100%;border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #edf0f5;text-align:left;font-size:14px}.scroll{overflow:auto}#status{padding:12px;background:#fff6e4;border-radius:8px}@media(max-width:600px){main{padding:12px}.cards{grid-template-columns:1fr 1fr}.cards .card:last-child{grid-column:1/-1}form{grid-template-columns:1fr}}
+ .charts{display:grid;grid-template-columns:1fr 1fr;gap:14px}.chart-card{border:1px solid #e5eaf1;border-radius:12px;padding:12px;min-width:0}.chart-card h3{margin:0 0 10px;font-size:15px}.chart-canvas{width:100%;height:230px;display:block}.chart-note{font-size:12px;color:#65738a;margin:6px 0 0}.chart-legend{display:flex;gap:15px;flex-wrap:wrap;font-size:12px;color:#52627a}.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}.dot-income{background:#15966c}.dot-expense{background:#e15c69}@media(max-width:600px){.charts{grid-template-columns:1fr}.chart-canvas{height:220px}} .admin-actions{display:flex;gap:5px;min-width:130px}.admin-actions button{padding:7px;font-size:12px;margin:0}.danger{background:#b42336}.secondary{background:#66758b}.admin-box{background:#fff;border:1px solid #e5eaf1;border-radius:15px;padding:16px;margin:12px 0}.admin-box input{max-width:350px}.hidden{display:none!important}#admin-state{font-size:13px;color:#52627a} </style></head><body><main><h1>💰 บัญชีรายรับ–รายจ่ายส่วนกลาง</h1><p id="status" role="status">กำลังตรวจสอบการเชื่อมต่อ…</p><div class="cards"><div class="card">รายรับ<b id="income" class="green">฿0</b></div><div class="card">รายจ่าย<b id="expense" class="red">฿0</b></div><div class="card">คงเหลือ<b id="balance">฿0</b></div></div><section class="panel"><h2>เพิ่มรายการ</h2><form id="form"><label>วันที่<input type="date" id="date" required></label><label>ประเภท<select id="type"><option value="income">รายรับ</option><option value="expense">รายจ่าย</option></select></label><label>หมวดหมู่<select id="category" required></select></label><label>จำนวนเงิน (บาท)<input id="amount" type="number" min="0.01" step="0.01" required></label><label>ชื่อผู้บันทึก<input id="author" maxlength="80" required></label><label>รายละเอียด<input id="note" maxlength="300"></label><button id="save" class="wide" disabled>บันทึกรายการ</button></form></section><section class="admin-box"><h2>🔐 ผู้ดูแลระบบ</h2><p id="admin-state">ยังไม่ได้เข้าสู่ระบบ — ผู้ใช้งานทั่วไปดูและเพิ่มรายการได้</p><form id="login-form"><label>อีเมลผู้ดูแล<input id="admin-email" type="email" autocomplete="username" required></label><label>รหัสผ่าน<input id="admin-password" type="password" autocomplete="current-password" required></label><button class="wide" type="submit">เข้าสู่ระบบเพื่อลบรายการ</button></form><button id="logout" class="secondary hidden" type="button">ออกจากระบบผู้ดูแล</button></section><section class="panel" id="dashboard"><h2>📊 กราฟสรุปรายรับ–รายจ่าย</h2><p class="muted">กราฟอัปเดตตามเดือนและประเภทที่เลือกในส่วนประวัติและรายงาน</p><div class="charts"><div class="chart-card"><h3>รายรับเทียบรายจ่าย</h3><canvas class="chart-canvas" id="comparison-chart" role="img" aria-label="กราฟแท่งเปรียบเทียบรายรับรายจ่าย"></canvas><div class="chart-legend"><span><i class="dot dot-income"></i>รายรับ</span><span><i class="dot dot-expense"></i>รายจ่าย</span></div></div><div class="chart-card"><h3>รายจ่ายแยกตามหมวดหมู่</h3><canvas class="chart-canvas" id="category-chart" role="img" aria-label="กราฟรายจ่ายแยกตามหมวดหมู่"></canvas><p class="chart-note" id="category-caption"></p></div></div><div class="chart-card" style="margin-top:14px"><h3>แนวโน้มย้อนหลัง 6 เดือน</h3><canvas class="chart-canvas" id="trend-chart" role="img" aria-label="กราฟแนวโน้มรายรับรายจ่ายย้อนหลังหกเดือน"></canvas><p class="chart-note">แสดงข้อมูลย้อนหลัง 6 เดือนถึงเดือนที่เลือก โดยไม่ใช้ตัวกรองประเภทและการค้นหา</p></div></section><section class="panel"><h2>ประวัติและรายงาน</h2><div class="tools"><input id="month" type="month" aria-label="เลือกเดือน"><select id="filter"><option value="all">ทั้งหมด</option><option value="income">รายรับ</option><option value="expense">รายจ่าย</option></select><input id="search" placeholder="ค้นหา"><button id="refresh">รีเฟรช</button><button id="export">ส่งออก CSV</button></div><p id="summary" class="muted"></p><div class="scroll"><table><thead><tr><th>วันที่</th><th>รายการ</th><th>ผู้บันทึก</th><th>จำนวน</th><th id="actions-head" class="hidden">จัดการ</th></tr></thead><tbody id="rows"></tbody></table></div></section><p class="muted">ทุกคนที่มีลิงก์สามารถดูและเพิ่มรายการได้ โดยไม่ต้องล็อกอิน การลบรายการต้องเข้าสู่ระบบด้วยบัญชีผู้ดูแลที่ได้รับสิทธิ์ อย่าบันทึกข้อมูลส่วนบุคคลหรือการเงินที่เป็นความลับในระบบสาธารณะนี้</p></main><script>
+// Replace with your project's public URL and publishable/anon key. Never use service_role or secret keys.
+const SUPABASE_URL='https://huqbbtwnkyjztgxseetd.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_PmiWOBNbkY2H4YZlnagueQ_188NlTtA';
+const $=id=>document.getElementById(id),cats={income:['เงินเดือน','ยอดขาย','เงินสนับสนุน','รายรับอื่น ๆ'],expense:['อาหาร','เดินทาง','ค่าน้ำค่าไฟ','อุปกรณ์','ค่าบริการ','รายจ่ายอื่น ๆ']};let items=[],adminToken=null;
+const ready=SUPABASE_URL.startsWith('https://')&&SUPABASE_ANON_KEY.startsWith('sb_publishable_');
+const money=n=>'฿'+Number(n).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+function categoryOptions(){$('category').replaceChildren(...cats[$('type').value].map(x=>new Option(x,x)))}$('type').onchange=categoryOptions;categoryOptions();let today=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);$('date').value=today;$('month').value=today.slice(0,7);
+function status(s){$('status').textContent=s}
+async function api(path,options={}){
+  const endpoint=new URL('/rest/v1/'+path,SUPABASE_URL);
+  const headers=new Headers({
+    apikey:SUPABASE_ANON_KEY,
+    'Content-Type':'application/json',
+    ...(options.asAdmin&&adminToken?{Authorization:'Bearer '+adminToken}:{}),
+    ...options.headers
+  });
+  let response;
+  try {
+    response=await fetch(endpoint.href,{
+      method:options.method||'GET',
+      mode:'cors',
+      headers,
+      ...(options.body!==undefined?{body:options.body}:{})
+    });
+  } catch(error) {
+    throw new Error('ติดต่อ Supabase ไม่ได้ ('+(error.message||'Network error')+'). กรุณาตรวจสอบอินเทอร์เน็ตและ Project URL');
+  }
+  if(!response.ok){
+    const details=(await response.text()).slice(0,500);
+    if(response.status===401&&options.asAdmin){adminToken=null;adminUI();throw new Error('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่')}throw new Error('HTTP '+response.status+': '+details);
+  }
+  if(response.status===204)return null;
+  const content=await response.text();
+  return content?JSON.parse(content):null;
+}
+function filtered(){return items.filter(x=>(!$('month').value||x.transaction_date.startsWith($('month').value))&&($('filter').value==='all'||x.type===$('filter').value)&&[x.description,x.category,x.recorded_by].join(' ').toLowerCase().includes($('search').value.toLowerCase()))}
+function adminUI(){const logged=!!adminToken;$('login-form').classList.toggle('hidden',logged);$('logout').classList.toggle('hidden',!logged);$('actions-head').classList.toggle('hidden',!logged);$('admin-state').textContent=logged?'เข้าสู่ระบบแล้ว — สามารถลบรายการได้ (หากได้รับสิทธิ์จากฐานข้อมูล)':'ยังไม่ได้เข้าสู่ระบบ — ผู้ใช้งานทั่วไปดูและเพิ่มรายการได้';render()}
+async function login(email,password){const r=await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password})});const body=await r.json();if(!r.ok)throw new Error(body.msg||body.error_description||body.message||'เข้าสู่ระบบไม่สำเร็จ');adminToken=body.access_token;adminUI()}
+$('login-form').onsubmit=async e=>{e.preventDefault();try{await login($('admin-email').value.trim(),$('admin-password').value);$('admin-password').value=''}catch(e){alert('เข้าสู่ระบบไม่สำเร็จ: '+e.message)}};
+$('logout').onclick=()=>{adminToken=null;adminUI()};
+async function deleteItem(x){if(!confirm('ยืนยันลบรายการ '+x.category+' '+money(x.amount)+' ? การลบไม่สามารถย้อนกลับได้'))return;try{const removed=await api('transactions?id=eq.'+encodeURIComponent(x.id),{method:'DELETE',asAdmin:true,headers:{Prefer:'return=representation'}});if(!Array.isArray(removed)||removed.length!==1)throw new Error('ไม่พบรายการที่ลบ หรือบัญชีนี้ยังไม่ได้รับสิทธิ์ลบ');await load();alert('ลบรายการสำเร็จ')}catch(e){alert('ลบไม่สำเร็จ: '+e.message)}}
+function chartSetup(id){const el=$(id),w=Math.max(250,el.clientWidth),h=el.clientHeight||220,dpr=Math.min(window.devicePixelRatio||1,2);el.width=Math.round(w*dpr);el.height=Math.round(h*dpr);const ctx=el.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);ctx.font='12px system-ui,sans-serif';return {ctx,w,h}}
+function emptyChart(ctx,w,h,msg='ยังไม่มีข้อมูล'){ctx.fillStyle='#7a8799';ctx.textAlign='center';ctx.fillText(msg,w/2,h/2)}
+function compact(n){return Number(n).toLocaleString('th-TH',{maximumFractionDigits:0})}
+function drawBarChart(id,entries,colors){const {ctx,w,h}=chartSetup(id);const max=Math.max(0,...entries.map(x=>x.value));if(!max){emptyChart(ctx,w,h);return}const left=70,right=15,top=18,bottom=34,plotW=w-left-right,plotH=h-top-bottom;const barH=Math.min(38,plotH/(entries.length*1.7));entries.forEach((e,i)=>{const cy=top+(i+.5)*plotH/entries.length;ctx.fillStyle='#52627a';ctx.textAlign='right';ctx.fillText(e.label.length>10?e.label.slice(0,9)+'…':e.label,left-9,cy+4);ctx.fillStyle='#eef2f7';ctx.fillRect(left,cy-barH/2,plotW,barH);const bw=plotW*e.value/max;ctx.fillStyle=colors[i%colors.length];ctx.fillRect(left,cy-barH/2,bw,barH);ctx.fillStyle='#17243b';ctx.textAlign=bw>65?'right':'left';ctx.fillText(compact(e.value),left+bw+(bw>65?-6:5),cy+4)});ctx.fillStyle='#7a8799';ctx.textAlign='left';ctx.fillText('บาท',left,h-7)}
+function drawTrend(){const {ctx,w,h}=chartSetup('trend-chart');const base=$('month').value||today.slice(0,7),[yy,mm]=base.split('-').map(Number);const months=Array.from({length:6},(_,i)=>{const d=new Date(yy,mm-1-(5-i),1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')});const data=months.map(m=>({month:m,income:0,expense:0}));for(const x of items){const d=data.find(d=>d.month===x.transaction_date.slice(0,7));if(d)d[x.type]=(d[x.type]||0)+Number(x.amount)}const max=Math.max(0,...data.flatMap(d=>[d.income,d.expense]));if(!max){emptyChart(ctx,w,h,'ยังไม่มีข้อมูลในช่วง 6 เดือน');return}const left=45,right=10,top=18,bottom=45,ph=h-top-bottom,pw=w-left-right;ctx.strokeStyle='#e4e9f1';ctx.fillStyle='#7a8799';ctx.textAlign='right';for(let i=0;i<=3;i++){let y=top+ph*i/3;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-right,y);ctx.stroke();ctx.fillText(compact(max*(1-i/3)),left-5,y+4)}const groupW=pw/6,barW=Math.min(20,groupW*.28);data.forEach((d,i)=>{const cx=left+groupW*(i+.5);for(const [j,key,color] of [[0,'income','#15966c'],[1,'expense','#e15c69']]){const bh=ph*d[key]/max;ctx.fillStyle=color;ctx.fillRect(cx+(j===0?-barW-1:1),top+ph-bh,barW,bh)}ctx.fillStyle='#52627a';ctx.textAlign='center';ctx.fillText(d.month.slice(5),cx,h-25)});ctx.fillStyle='#52627a';ctx.textAlign='center';ctx.fillText('เดือน',w/2,h-5)}
+function drawCharts(a){const inc=a.filter(x=>x.type==='income').reduce((s,x)=>s+Number(x.amount),0),exp=a.filter(x=>x.type==='expense').reduce((s,x)=>s+Number(x.amount),0);drawBarChart('comparison-chart',[{label:'รายรับ',value:inc},{label:'รายจ่าย',value:exp}],['#15966c','#e15c69']);const sums={};a.filter(x=>x.type==='expense').forEach(x=>{sums[x.category]=(sums[x.category]||0)+Number(x.amount)});const cats=Object.entries(sums).sort((a,b)=>b[1]-a[1]);drawBarChart('category-chart',cats.slice(0,6).map(([label,value])=>({label,value})),['#e15c69','#ee9465','#e9bb64','#9a85d6','#56a4cf','#6bbfa3']);$('category-caption').textContent=cats.length>6?'แสดง 6 หมวดที่มียอดสูงสุด':'แสดงยอดรายจ่ายตามตัวกรอง';drawTrend()}
+function render(){let a=filtered(),inc=a.filter(x=>x.type==='income').reduce((s,x)=>s+Number(x.amount),0),exp=a.filter(x=>x.type==='expense').reduce((s,x)=>s+Number(x.amount),0);$('income').textContent=money(inc);$('expense').textContent=money(exp);$('balance').textContent=money(inc-exp);$('summary').textContent=a.length+' รายการ (ตามตัวกรองที่เลือก)';drawCharts(a);$('rows').replaceChildren();for(let x of a){let tr=document.createElement('tr');for(let v of [x.transaction_date,x.category+(x.description?' — '+x.description:''),x.recorded_by,(x.type==='income'?'+':'−')+money(x.amount)]){let td=document.createElement('td');td.textContent=v;tr.append(td)}if(adminToken){let td=document.createElement('td'),actions=document.createElement('div');actions.className='admin-actions';let del=document.createElement('button');del.textContent='ลบ';del.type='button';del.className='danger';del.onclick=()=>deleteItem(x);actions.append(del);td.append(actions);tr.append(td)}$('rows').append(tr)}}
+async function load(){if(!ready){status('ยังไม่เชื่อมต่อ: เจ้าของระบบต้องใส่ Supabase publishable/anon key ก่อน');return}try{status('กำลังโหลดข้อมูลส่วนกลาง…');items=await api('transactions?select=id,transaction_date,type,category,amount,description,recorded_by,created_at&order=transaction_date.desc,created_at.desc&limit=1000');render();status('เชื่อมต่อฐานข้อมูลส่วนกลางแล้ว • แสดงรายการล่าสุดสูงสุด 1,000 รายการ');$('save').disabled=false}catch(e){status('เชื่อมต่อไม่สำเร็จ: '+e.message)}}
+$('form').onsubmit=async e=>{
+  e.preventDefault();
+  const amount=Number($('amount').value);
+  const date=$('date').value;
+  const author=$('author').value.trim();
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return alert('กรุณาเลือกวันที่ให้ถูกต้อง');
+  if(!Number.isFinite(amount)||amount<=0)return alert('กรุณาระบุจำนวนเงินที่ถูกต้อง');
+  if(!author)return alert('กรุณากรอกชื่อผู้บันทึก');
+  $('save').disabled=true;
+  try{
+    await api('transactions',{
+      method:'POST',
+      headers:{Prefer:'return=minimal'},
+      body:JSON.stringify({
+        transaction_date:date,
+        type:$('type').value,
+        category:$('category').value,
+        amount,
+        recorded_by:author,
+        description:$('note').value.trim()
+      })
+    });
+    $('amount').value='';
+    $('note').value='';
+    await load();
+    alert('บันทึกรายการสำเร็จ');
+  }catch(err){
+    alert('บันทึกไม่สำเร็จ: '+err.message);
+  }finally{
+    $('save').disabled=!ready;
+  }
+};
+for(let id of ['month','filter','search'])$(id).addEventListener('input',render);$('refresh').onclick=load;$('export').onclick=()=>{let data=[['วันที่','ประเภท','หมวดหมู่','จำนวนเงิน','ผู้บันทึก','รายละเอียด'],...filtered().map(x=>[x.transaction_date,x.type==='income'?'รายรับ':'รายจ่าย',x.category,x.amount,x.recorded_by,x.description])];let csv='\ufeff'+data.map(row=>row.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(',')).join('\r\n');let url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));let a=document.createElement('a');a.href=url;a.download='income-expense.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};window.addEventListener('resize',()=>render());load();
+</script></body></html>
